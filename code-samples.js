@@ -117,13 +117,18 @@ const initialState = { red: 0, blue: 0 };
  */
 class ClickCounter {
 	constructor() {
+		// An Rx.Subject is an observable that exposes an API for pushing items onto the Observable sequence
 		this._actions = new Rx.Subject();
+
+		// Our state is simply a result of accumulating all of our actions over time!
 		this._state = this._actions
 			.scan(this.reduce.bind(this), initialState)
 			.startWith(initialState);
 	}
 
-	// Same aggregation function used in the string summing example!
+	// Same aggregation function used in the string summing example! This function
+	// is pure so we can test it to our heart's content. Which is great because most of
+	// our application logic lives here.
 	reduce(state, action) {
 		switch (action) {
 			case 'blue':
@@ -141,6 +146,11 @@ class ClickCounter {
 	state() {
 		return this._state;
 	}
+
+	/**
+	 * Here, our action creators expose an API that allow the UI to push
+	 * events/actions onto the actions observable.
+	 */
 
 	blueClick() {
 		this._actions.onNext('blue');
