@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Code Samples</title>
+	<style type="text/css">
+	body, html {
+		font-family: sans-serif;
+	}
+
+	body {
+		padding: 50px;
+	}
+
+	button {
+		padding: 5px 10px;
+	}
+
+	.demo {
+		padding-top: 15px;
+		margin-bottom: 30px;
+	}
+
+	.red {
+		background-color: red;
+		color: white;
+	}
+
+	.blue {
+		background-color: blue;
+		color: white;
+	}
+	</style>
+</head>
+<body>
+	<h1>Using reduce and Observables</h1>
+
+	<h3>User clicks (open up the console)</h3>
+	<div class="demo">
+		<button id="my-button">BUTTON</button>
+	</div>
+
+	<h3>Summing user clicks (open up the console)</h3>
+	<div class="demo">
+		<button id="sum-button">SUM BUTTON</button>
+	</div>
+
+	<h3>Subscribing to state updates and rendering</h3>
+	<div class="demo">
+		<div>
+			<button id="red-button" class="red">RED BUTTON</button>
+			<button id="blue-button" class="blue">BLUE BUTTON</button>
+		</div>
+		<br/>
+		<div id='score-board'></div>
+		<div id='winning'></div>
+	</div>
+
+	<script type="text/javascript" src="/bundle.js"></script>
+</body>
+</html>

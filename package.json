@@ -1,0 +1,24 @@
+{
+  "name": "blog-demos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "code-samples.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify code-samples.js -t babelify --outfile bundle.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "browserify": "^12.0.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.3.13",
+    "babelify": "^7.2.0"
+  },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  }
+}
