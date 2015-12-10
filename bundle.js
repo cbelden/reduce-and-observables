@@ -5,6 +5,8 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// Using reduce to sum a list of integers
+
 function accumulator(acc, x) {
 	return acc + x;
 }
@@ -14,7 +16,9 @@ var sum = [1, 2, 3, 4, 5].reduce(accumulator, 0);
 console.log(sum);
 // > 15
 
-function clickAccumulator(acc, x) {
+// Using reduce to count a series of strings
+
+function colorAccumulator(acc, x) {
 	if (x === 'blue') {
 		acc.blue += 1;
 	}
@@ -26,7 +30,18 @@ function clickAccumulator(acc, x) {
 	return acc;
 }
 
-var clicks = ['red', 'red', 'blue', 'red'].reduce(clickAccumulator, {
+function pureColorAccumulator(acc, x) {
+	switch (x) {
+		case 'blue':
+			return Object.assign({}, acc, { blue: acc.blue + 1 });
+		case 'red':
+			return Object.assign({}, acc, { red: acc.red + 1 });
+		default:
+			return acc;
+	}
+}
+
+var clicks = ['red', 'red', 'blue', 'red'].reduce(pureColorAccumulator, {
 	red: 0,
 	blue: 0
 });
@@ -34,7 +49,7 @@ var clicks = ['red', 'red', 'blue', 'red'].reduce(clickAccumulator, {
 console.log(clicks);
 // > { red: 3, blue: 1 }
 
-// Unit tests
+// Sample unit tests
 // describe('clickAccumulator', () => {
 // 	it('should add 1 blue', () => {
 // 		const actual = clickAccumulator({ red: 0, blue: 0}, 'blue');
@@ -48,6 +63,8 @@ console.log(clicks);
 
 var Rx = require('rx');
 
+// Transforming an array into an observable sequence
+
 Rx.Observable.from([1, 2, 3]).subscribe(function (x) {
 	console.log(x);
 });
@@ -56,11 +73,18 @@ Rx.Observable.from([1, 2, 3]).subscribe(function (x) {
 // > 2
 // > 3
 
+// Modeling user clicks as an observable sequence
+
 var button = document.getElementById('my-button');
 var buttonClicks = Rx.Observable.fromEvent(button, 'click');
 buttonClicks.subscribe(function (ev) {
 	console.log('Hey! You clicked me!!');
 });
+
+// CLICK
+// > Hey! You clicked me!!
+
+// Summing user clicks using Rx.Observable.prototype.scan
 
 var sumButton = document.getElementById('sum-button');
 var sumCounts = Rx.Observable.fromEvent(sumButton, 'click').scan(function (acc, ev) {
@@ -70,7 +94,21 @@ var sumCounts = Rx.Observable.fromEvent(sumButton, 'click').scan(function (acc, 
 // Emits the running total of clicks!
 sumCounts.subscribe(console.log.bind(console));
 
+// CLICK
+// > 1
+// CLICK
+// > 2
+// CLICK
+// > 3
+
+// Demo application using Observables + reduce to maintain/control application state
+
+// Our initial application state
 var initialState = { red: 0, blue: 0 };
+
+/**
+ * Responsible for managing the application state for a click counter.
+ */
 
 var ClickCounter = (function () {
 	function ClickCounter() {
@@ -80,21 +118,19 @@ var ClickCounter = (function () {
 		this._state = this._actions.scan(this.reduce.bind(this), initialState).startWith(initialState);
 	}
 
+	// Same aggregation function used in the string summing example!
+
 	_createClass(ClickCounter, [{
 		key: 'reduce',
-		value: function reduce() {
-			var state = arguments.length <= 0 || arguments[0] === undefined ? initialState : arguments[0];
-			var click = arguments[1];
-
-			switch (click) {
+		value: function reduce(state, action) {
+			switch (action) {
 				case 'blue':
 					return Object.assign({}, state, { blue: state.blue + 1 });
-
 				case 'red':
 					return Object.assign({}, state, { red: state.red + 1 });
+				default:
+					return state;
 			}
-
-			return state;
 		}
 
 		/**

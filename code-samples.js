@@ -1,4 +1,4 @@
-
+// Using reduce to sum a list of integers
 
 function accumulator(acc, x) {
 	return acc + x;
@@ -10,9 +10,10 @@ console.log(sum);
 // > 15
 
 
+// Using reduce to count a series of strings
 
 
-function clickAccumulator(acc, x) {
+function colorAccumulator(acc, x) {
 	if (x === 'blue') {
 		acc.blue += 1;
 	}
@@ -24,7 +25,20 @@ function clickAccumulator(acc, x) {
 	return acc;
 }
 
-const clicks = ['red', 'red', 'blue', 'red'].reduce(clickAccumulator, {
+
+function pureColorAccumulator(acc, x) {
+	switch (x) {
+		case 'blue':
+			return Object.assign({}, acc, { blue: acc.blue + 1 });
+		case 'red':
+			return Object.assign({}, acc, { red: acc.red + 1 });
+		default:
+			return acc;
+	}
+}
+
+
+const clicks = ['red', 'red', 'blue', 'red'].reduce(pureColorAccumulator, {
 	red: 0,
 	blue: 0
 });
@@ -34,7 +48,7 @@ console.log(clicks);
 
 
 
-// Unit tests
+// Sample unit tests
 // describe('clickAccumulator', () => {
 // 	it('should add 1 blue', () => {
 // 		const actual = clickAccumulator({ red: 0, blue: 0}, 'blue');
@@ -49,6 +63,8 @@ console.log(clicks);
 
 const Rx = require('rx');
 
+// Transforming an array into an observable sequence
+
 Rx.Observable.from([1, 2, 3]).subscribe(x => {
 	console.log(x);
 });
@@ -58,14 +74,19 @@ Rx.Observable.from([1, 2, 3]).subscribe(x => {
 // > 3
 
 
+// Modeling user clicks as an observable sequence
+
 const button = document.getElementById('my-button');
 const buttonClicks = Rx.Observable.fromEvent(button, 'click');
 buttonClicks.subscribe(ev => {
 	console.log('Hey! You clicked me!!');
 });
 
+// CLICK
+// > Hey! You clicked me!!
 
 
+// Summing user clicks using Rx.Observable.prototype.scan
 
 const sumButton = document.getElementById('sum-button');
 const sumCounts = Rx.Observable.fromEvent(sumButton, 'click')
@@ -77,8 +98,23 @@ const sumCounts = Rx.Observable.fromEvent(sumButton, 'click')
 sumCounts.subscribe(console.log.bind(console));
 
 
+// CLICK
+// > 1
+// CLICK
+// > 2
+// CLICK
+// > 3
+
+
+// Demo application using Observables + reduce to maintain/control application state
+
+
+// Our initial application state
 const initialState = { red: 0, blue: 0 };
 
+/**
+ * Responsible for managing the application state for a click counter.
+ */
 class ClickCounter {
 	constructor() {
 		this._actions = new Rx.Subject();
@@ -87,16 +123,16 @@ class ClickCounter {
 			.startWith(initialState);
 	}
 
-	reduce(state = initialState, click) {
-		switch (click){
+	// Same aggregation function used in the string summing example!
+	reduce(state, action) {
+		switch (action) {
 			case 'blue':
 				return Object.assign({}, state, { blue: state.blue + 1 });
-
 			case 'red':
 				return Object.assign({}, state, { red: state.red + 1 });
+			default:
+				return state;
 		}
-
-		return state;
 	}
 
 	/**
